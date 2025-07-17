@@ -15,22 +15,22 @@ const Project = () => {
   const apartments = [
     {
       type: '3 BHK Apartments',
-      area: '1500 Sq.Ft',
-      price: '₹ 1.99 Cr* (All In)'
-    },
-    {
-      type: '3 BHK Apartments',
-      area: '1800 Sq.Ft',
-      price: '₹ On Request (All In)'
-    },
-    {
-      type: '3 BHK Apartments',
-      area: '2500 Sq.Ft',
-      price: '₹ On Request (All In)'
+      area: '1993 Sq.Ft',
+      price: '₹ 2.90 Cr* (All In)'
     },
     {
       type: '4 BHK Apartments',
-      area: '3200 Sq.Ft',
+      area: '2575 Sq.Ft',
+      price: '₹ On Request (All In)'
+    },
+    {
+      type: '3 BHK + ST',
+      area: '2368 Sq.Ft',
+      price: '₹ On Request (All In)'
+    },
+    {
+      type: '4 BHK + ST',
+      area: '2799 Sq.Ft',
       price: '₹ On Request (All In)'
     }
   ];
