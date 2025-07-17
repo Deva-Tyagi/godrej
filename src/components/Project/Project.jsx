@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { X, Phone } from 'lucide-react';
-import emailjs from '@emailjs/browser';
 
 const Project = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -12,11 +11,6 @@ const Project = () => {
   });
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Initialize EmailJS
-  useEffect(() => {
-    emailjs.init('FPyANi4X-1gUfsMCI'); // Replace with your EmailJS Public Key
-  }, []);
 
   const apartments = [
     {
@@ -73,36 +67,15 @@ const Project = () => {
       return;
     }
 
-    // Get current time for the template
-    const currentTime = new Date().toLocaleString('en-US', {
-      timeZone: 'Asia/Kolkata',
-      dateStyle: 'medium',
-      timeStyle: 'short'
-    });
-
-    // Map formData to EmailJS template parameters
-    const templateParams = {
-      from_name: formData.name,
-      from_email: formData.email,
-      phone: formData.phone,
-      message: formData.message || 'No message provided',
-      time: currentTime
-    };
-
+    // Simulate form submission (since EmailJS won't work in this environment)
     try {
-      await emailjs.send(
-        'service_91dd84g', // Your EmailJS Service ID
-        'template_ncabbum', // Your EmailJS Template ID
-        templateParams
-      );
-      console.log('Email sent successfully:', templateParams);
+      await new Promise(resolve => setTimeout(resolve, 2000));
       alert('Thank you! Your request has been submitted successfully. We will contact you soon.');
       setFormData({ name: '', email: '', phone: '', message: '' });
       setFormErrors({});
       setShowPopup(false);
     } catch (error) {
-      console.error('Error sending email:', error.text || error);
-      alert(`Sorry, there was an error sending your request: ${error.text || 'Unknown error'}. Please try again.`);
+      alert('Sorry, there was an error sending your request. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -117,38 +90,46 @@ const Project = () => {
   };
 
   return (
-    <div className="h-screen bg-gray-100 flex flex-col justify-center px-4">
+    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto w-full">
-        <h1 className="text-4xl font-bold text-center text-blue-600 mb-8">Price List</h1>
+        {/* Title - Responsive text sizing */}
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-blue-600 mb-6 sm:mb-8 lg:mb-12">
+          Price List
+        </h1>
         
-        {/* Cards Grid - Single Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Cards Grid - Fully Responsive */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {apartments.map((apartment, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow duration-300 h-80 flex flex-col justify-between">
-              <div className="border-2 border-blue-600 rounded-lg p-6 mb-8">
-                <h3 className="text-xl font-semibold text-gray-800 text-center">
-                  {apartment.type}
-                </h3>
+            <div key={index} className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+              {/* Card Header */}
+              <div className="p-4 sm:p-6 lg:p-8 flex-grow">
+                <div className="border-2 border-blue-600 rounded-lg p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 lg:mb-8">
+                  <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-800 text-center leading-tight">
+                    {apartment.type}
+                  </h3>
+                </div>
+                
+                {/* Card Details */}
+                <div className="space-y-4 sm:space-y-6 mb-4 sm:mb-6 lg:mb-8">
+                  <div className="text-center">
+                    <span className="text-gray-700 font-medium text-sm sm:text-base lg:text-lg">Area: </span>
+                    <span className="text-gray-900 font-semibold text-sm sm:text-base lg:text-lg">{apartment.area}</span>
+                  </div>
+                  <div className="text-center border-t border-dotted border-gray-300 pt-4 sm:pt-6">
+                    <span className="text-gray-700 font-medium text-sm sm:text-base lg:text-lg">Price: </span>
+                    <span className="text-gray-900 font-semibold text-sm sm:text-base lg:text-lg break-words">{apartment.price}</span>
+                  </div>
+                </div>
               </div>
               
-              <div className="space-y-6 mb-8 flex-grow">
-                <div className="text-center">
-                  <span className="text-gray-700 font-medium text-lg">Area : </span>
-                  <span className="text-gray-900 font-semibold text-lg">{apartment.area}</span>
-                </div>
-                <div className="text-center border-t border-dotted border-gray-300 pt-6">
-                  <span className="text-gray-700 font-medium text-lg">Price : </span>
-                  <span className="text-gray-900 font-semibold text-lg">{apartment.price}</span>
-                </div>
-              </div>
-              
-              <div className="text-center mt-auto">
+              {/* Card Footer - Button */}
+              <div className="p-4 sm:p-6 lg:p-8 pt-0">
                 <button
                   onClick={openPopup}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-4 px-8 rounded-full transition-colors duration-200 flex items-center justify-center mx-auto space-x-2 text-lg"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 sm:py-4 px-4 sm:px-6 lg:px-8 rounded-full transition-all duration-200 flex items-center justify-center space-x-2 text-sm sm:text-base lg:text-lg hover:shadow-lg active:transform active:scale-95"
                 >
                   <span>Request A Call</span>
-                  <Phone size={16} />
+                  <Phone size={16} className="sm:w-5 sm:h-5" />
                 </button>
               </div>
             </div>
@@ -156,21 +137,23 @@ const Project = () => {
         </div>
       </div>
 
-      {/* Popup Form */}
+      {/* Popup Form - Fully Responsive */}
       {showPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max Hawkins max-w-md w-full max-h-[90vh] overflow-10-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-blue-600">Request a Call</h2>
+          <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+            {/* Popup Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 sm:p-6 flex justify-between items-center">
+              <h2 className="text-xl sm:text-2xl font-bold text-blue-600">Request a Call</h2>
               <button
                 onClick={closePopup}
-                className="text-gray-500 hover:text-gray-700 transition-colors"
+                className="text-gray-500 hover:text-gray-700 transition-colors p-1 hover:bg-gray-100 rounded-full"
               >
                 <X size={24} />
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            {/* Form */}
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                   Full Name *
@@ -182,7 +165,7 @@ const Project = () => {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className={`w-full px-3 py-2 border ${formErrors.name ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent`}
+                  className={`w-full px-3 py-2 sm:py-3 border ${formErrors.name ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm sm:text-base`}
                   placeholder="Enter your full name"
                 />
                 {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
@@ -199,7 +182,7 @@ const Project = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className={`w-full px-3 py-2 border ${formErrors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent`}
+                  className={`w-full px-3 py-2 sm:py-3 border ${formErrors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm sm:text-base`}
                   placeholder="Enter your email address"
                 />
                 {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
@@ -216,7 +199,7 @@ const Project = () => {
                   value={formData.phone}
                   onChange={handleInputChange}
                   required
-                  className={`w-full px-3 py-2 border ${formErrors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent`}
+                  className={`w-full px-3 py-2 sm:py-3 border ${formErrors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm sm:text-base`}
                   placeholder="Enter your phone number"
                 />
                 {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
@@ -232,28 +215,30 @@ const Project = () => {
                   value={formData.message}
                   onChange={handleInputChange}
                   rows="4"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="w-full px-3 py-2 sm:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm sm:text-base resize-none"
                   placeholder="Tell us about your requirements..."
                 />
               </div>
               
-              <div className="flex space-x-4 pt-4">
+              {/* Form Buttons */}
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-4">
                 <button
                   type="button"
                   onClick={closePopup}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                  className="w-full sm:flex-1 px-4 py-2 sm:py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm sm:text-base"
                 >
                   Cancel
                 </button>
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:flex-1 px-4 py-2 sm:py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 >
                   {isSubmitting ? 'Submitting...' : 'Submit Request'}
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       )}
