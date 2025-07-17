@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X, Phone } from "lucide-react";
+import { X, Phone, Menu } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import logo from '../../assets/godrej-logo.png';
 import aqua from "../../assets/godrej-codename-aquaman.jpg";
@@ -16,6 +16,7 @@ import Footer from "../Footer/Footer";
 const Navbar = () => {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Added mobile menu state
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -46,6 +47,7 @@ const Navbar = () => {
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
+    setIsMobileMenuOpen(false); // Close mobile menu after navigation
   };
 
   // Handle form input changes
@@ -140,7 +142,7 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Navigation Menu */}
+            {/* Desktop Navigation Menu */}
             <div className="hidden md:flex items-center space-x-8">
               <button
                 onClick={() => scrollToSection("projects")}
@@ -194,23 +196,79 @@ const Navbar = () => {
 
             {/* Mobile Menu Button */}
             <div className="md:hidden">
-              <button className="text-gray-700 hover:text-blue-600">
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
+              <button 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-gray-700 hover:text-blue-600 p-2"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
               </button>
             </div>
           </div>
+
+          {/* Mobile Menu */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+              <div className="px-2 pt-2 pb-3 space-y-1">
+                <button
+                  onClick={() => scrollToSection("projects")}
+                  className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 font-medium transition-colors w-full text-left"
+                >
+                  PROJECTS
+                </button>
+                <button
+                  onClick={() => scrollToSection("overview")}
+                  className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 font-medium transition-colors w-full text-left"
+                >
+                  OVERVIEW
+                </button>
+                <button
+                  onClick={() => scrollToSection("highlights")}
+                  className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 font-medium transition-colors w-full text-left"
+                >
+                  HIGHLIGHTS
+                </button>
+                <button
+                  onClick={() => scrollToSection("amenities")}
+                  className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 font-medium transition-colors w-full text-left"
+                >
+                  AMENITIES
+                </button>
+                <button
+                  onClick={() => scrollToSection("floor-plan")}
+                  className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 font-medium transition-colors w-full text-left"
+                >
+                  FLOOR PLAN
+                </button>
+                <button
+                  onClick={() => scrollToSection("gallery")}
+                  className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 font-medium transition-colors w-full text-left"
+                >
+                  GALLERY
+                </button>
+                <button
+                  onClick={() => {
+                    setIsContactOpen(true);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 font-medium transition-colors w-full text-left"
+                >
+                  CONTACT US
+                </button>
+                
+                {/* Mobile Phone Number */}
+                <div className="px-3 py-2 border-t border-gray-200 mt-2">
+                  <div className="flex items-center bg-blue-600 text-white px-3 py-2 rounded justify-center">
+                    <Phone className="w-4 h-4 mr-2" />
+                    <span className="font-medium">91 9818094754</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </nav>
 
