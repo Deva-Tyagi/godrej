@@ -265,7 +265,7 @@ const Footer = () => {
           <div className="text-center text-sm text-gray-600">
             <p className="mb-4 max-w-3xl mx-auto">
               <strong>Disclaimer:</strong> This is not the official website of
-              Great Value Eternia. It is owned and managed by RKRM Real Estate
+              Godrej Majesty. It is owned and managed by RKRM Real Estate
               LLP, a RERA-registered channel partner (RERA No: UPRERAAGT25838)
               for informational and marketing purposes only.| *T&C Apply
             </p>

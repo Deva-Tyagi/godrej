@@ -267,7 +267,7 @@ const BannerSection = () => {
           <div className="max-w-xl">
             <div className="flex items-center text-white mb-4">
               <MapPin size={16} className="mr-2 sm:size-[20px]" />
-              <span className="text-sm sm:text-lg">Greater Noida West, Sector 12</span>
+              <span className="text-sm sm:text-lg">Sector 12, Greater Noida West </span>
             </div>
 
             <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
