@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Phone, MessageCircle, X, Download, MapPin } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import banner2 from '../../assets/banner2.webp';
-import banner3 from '../../assets/banner3.webp';
-import banner4 from '../../assets/banner4.jpg';
+import banner3 from '../../assets/banner3.avif';
+import banner4 from '../../assets/banner4.webp';
 
 const BannerSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -12,13 +12,10 @@ const BannerSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
-    phone: '',
-    message: ''
+    phone: ''
   });
   const [brochureFormData, setBrochureFormData] = useState({
     name: '',
-    email: '',
     phone: ''
   });
   const [formErrors, setFormErrors] = useState({});
@@ -32,7 +29,7 @@ const BannerSection = () => {
     popupInterval: 12000,
     emailjsServiceId: 'service_91dd84g',
     emailjsTemplateId: 'template_ncabbum',
-    emailjsPublicKey: 'FPyANi4X-1gUfsMCI' // Replace with your EmailJS Public Key
+    emailjsPublicKey: 'FPyANi4X-1gUfsMCI' 
   };
 
   // Use imported images directly
@@ -67,6 +64,7 @@ const BannerSection = () => {
     setShowPopup(false);
     setFormErrors({});
     setSubmitMessage('');
+    setFormData({ name: '', phone: '' });
     // Start a new timer when popup is closed
     setTimeout(() => {
       const timer = startPopupTimer();
@@ -78,6 +76,7 @@ const BannerSection = () => {
     setShowBrochurePopup(false);
     setBrochureFormErrors({});
     setSubmitMessage('');
+    setBrochureFormData({ name: '', phone: '' });
   };
 
   const nextSlide = () => {
@@ -106,12 +105,14 @@ const BannerSection = () => {
     setBrochureFormErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
-  const validateForm = (data, isBrochureForm = false) => {
+  const validateForm = (data) => {
     const errors = {};
-    if (!data.name) errors.name = 'Name is required';
-    if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) errors.email = 'Valid email is required';
-    if (!data.phone || !/^\d{10}$/.test(data.phone)) errors.phone = 'Valid 10-digit phone number is required';
-    // if (!isBrochureForm && !data.message) errors.message = 'Message is required';
+    if (!data.name?.trim()) errors.name = 'Name is required';
+    if (!data.phone?.trim()) {
+      errors.phone = 'Phone number is required';
+    } else if (!/^\d{10}$/.test(data.phone.trim())) {
+      errors.phone = 'Valid 10-digit phone number is required';
+    }
     return errors;
   };
 
@@ -137,23 +138,25 @@ const BannerSection = () => {
 
     // Map formData to EmailJS template parameters
     const templateParams = {
-      from_name: formData.name,
-      from_email: formData.email,
-      phone: formData.phone,
-      message: formData.message,
+      from_name: formData.name.trim(),
+      phone: formData.phone.trim(),
+      message: 'Enquiry for Godrej Majesty',
       time: currentTime
     };
 
     try {
-      await emailjs.send(config.emailjsServiceId, config.emailjsTemplateId, templateParams);
-      console.log('Email sent successfully:', templateParams);
+      const result = await emailjs.send(config.emailjsServiceId, config.emailjsTemplateId, templateParams);
+      console.log('Email sent successfully:', result);
       setSubmitMessage('Thank you! We will contact you soon.');
-      setFormData({ name: '', email: '', phone: '', message: '' });
+      setFormData({ name: '', phone: '' });
       setFormErrors({});
-      setTimeout(() => setShowPopup(false), 2000);
+      setTimeout(() => {
+        setShowPopup(false);
+        setSubmitMessage('');
+      }, 2000);
     } catch (error) {
-      console.error('Error sending email:', error.text || error);
-      setSubmitMessage(`Failed to send: ${error.text || 'Unknown error'}. Please try again.`);
+      console.error('Error sending email:', error);
+      setSubmitMessage(`Failed to send inquiry. Please try again.`);
     } finally {
       setIsSubmitting(false);
     }
@@ -165,7 +168,7 @@ const BannerSection = () => {
     setSubmitMessage('');
 
     // Validate form
-    const errors = validateForm(brochureFormData, true);
+    const errors = validateForm(brochureFormData);
     if (Object.keys(errors).length > 0) {
       setBrochureFormErrors(errors);
       setIsSubmitting(false);
@@ -181,30 +184,33 @@ const BannerSection = () => {
 
     // Map brochureFormData to EmailJS template parameters
     const templateParams = {
-      from_name: brochureFormData.name,
-      from_email: brochureFormData.email,
-      phone: brochureFormData.phone,
-      message: 'User requested to download the investment brochure.',
+      from_name: brochureFormData.name.trim(),
+      from_email: 'brochure@godrejmajesty.com', // Default email since we're not collecting it
+      phone: brochureFormData.phone.trim(),
+      message: 'User requested to download the investment brochure for Godrej Majesty',
       time: currentTime
     };
 
     try {
-      await emailjs.send(config.emailjsServiceId, config.emailjsTemplateId, templateParams);
-      console.log('Email sent successfully:', templateParams);
+      const result = await emailjs.send(config.emailjsServiceId, config.emailjsTemplateId, templateParams);
+      console.log('Brochure request sent successfully:', result);
       setSubmitMessage('Thank you! We will contact you soon.');
-      setBrochureFormData({ name: '', email: '', phone: '' });
+      setBrochureFormData({ name: '', phone: '' });
       setBrochureFormErrors({});
-      setTimeout(() => setShowBrochurePopup(false), 2000);
+      setTimeout(() => {
+        setShowBrochurePopup(false);
+        setSubmitMessage('');
+      }, 2000);
     } catch (error) {
-      console.error('Error sending email:', error.text || error);
-      setSubmitMessage(`Failed to send: ${error.text || 'Unknown error'}. Please try again.`);
+      console.error('Error sending brochure request:', error);
+      setSubmitMessage(`Failed to send request. Please try again.`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleWhatsApp = () => {
-    const message = encodeURIComponent('Hi, I am interested in your property projects. Please provide more details.');
+    const message = encodeURIComponent('Hi, I am interested in Godrej Majesty. Please provide more details.');
     window.open(`https://wa.me/${config.whatsappNumber.replace('+', '')}?text=${message}`, '_blank');
   };
 
@@ -274,8 +280,8 @@ const BannerSection = () => {
               GODREJ MAJESTY
             </h1>
 
-            <h2 className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold mb-6 sm:mb-8">
-              Luxury 3 & 4 Bedroom Residences Starts
+            <h2 className="text-white text-lg sm:text-lg md:text-xl lg:text-2xl font-semibold mb-6 sm:mb-8">
+              Luxury 3 & 4 BHK Residences Starts At ₹ 2.90 Cr*
             </h2>
 
             <button
@@ -309,21 +315,6 @@ const BannerSection = () => {
                 {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
               </div>
 
-              <div>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Your Email"
-                  className={`w-full px-3 sm:px-4 py-2 sm:py-3 bg-white bg-opacity-20 text-white placeholder-gray-300 rounded-lg border ${
-                    formErrors.email ? 'border-red-500' : 'border-white border-opacity-30'
-                  } focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base`}
-                  required
-                />
-                {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
-              </div>
-
               <div className="flex">
                 <div className="flex items-center bg-white bg-opacity-20 rounded-l-lg px-2 sm:px-3 border border-white border-opacity-30 border-r-0">
                   <img src="https://flagcdn.com/w20/in.png" alt="India" className="w-4 sm:w-5 h-2 sm:h-3 mr-1 sm:mr-2" />
@@ -340,22 +331,8 @@ const BannerSection = () => {
                   } focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base`}
                   required
                 />
-                {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
               </div>
-
-              <div>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  placeholder="Your Message"
-                  rows="2"
-                  className={`w-full px-3 sm:px-4 py-2 sm:py-3 bg-white bg-opacity-20 text-white placeholder-gray-300 rounded-lg border ${
-                    formErrors.message ? 'border-red-500' : 'border-white border-opacity-30'
-                  } focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm sm:text-base`}
-                ></textarea>
-                {formErrors.message && <p className="text-red-500 text-xs mt-1">{formErrors.message}</p>}
-              </div>
+              {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
 
               {submitMessage && (
                 <div
@@ -438,21 +415,6 @@ const BannerSection = () => {
 
               <div>
                 <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Your Email"
-                  className={`w-full px-3 sm:px-4 py-2 sm:py-3 border ${
-                    formErrors.email ? 'border-red-500' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base`}
-                  required
-                />
-                {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
-              </div>
-
-              <div>
-                <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
@@ -464,6 +426,15 @@ const BannerSection = () => {
                   required
                 />
                 {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
+              </div>
+
+              <div className="mt-3 text-xs text-gray-500">
+                <label className="flex items-start">
+                  <input type="checkbox" className="mt-1 mr-2 flex-shrink-0" required />
+                  <span className="text-xs leading-tight">
+                    I authorize company representatives to Call, SMS, Email or WhatsApp me about its products and offers. This consent overrides any registration for DNC/NDNC.
+                  </span>
+                </label>
               </div>
 
               {submitMessage && (
@@ -490,7 +461,7 @@ const BannerSection = () => {
 
       {/* Brochure Download Popup */}
       {showBrochurePopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fadeIn">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl p-6 sm:p-8 max-w-md w-full mx-4 relative overflow-hidden">
             {/* Decorative elements */}
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-blue-700"></div>
@@ -515,10 +486,10 @@ const BannerSection = () => {
 
             <form onSubmit={handleBrochureSubmit} className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <label htmlFor="brochure-name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
                 <input
                   type="text"
-                  id="name"
+                  id="brochure-name"
                   name="name"
                   value={brochureFormData.name}
                   onChange={handleBrochureInputChange}
@@ -532,27 +503,10 @@ const BannerSection = () => {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={brochureFormData.email}
-                  onChange={handleBrochureInputChange}
-                  placeholder="Enter your email"
-                  className={`w-full px-4 py-3 border ${
-                    brochureFormErrors.email ? 'border-red-500' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-                  required
-                />
-                {brochureFormErrors.email && <p className="text-red-500 text-xs mt-1">{brochureFormErrors.email}</p>}
-              </div>
-
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <label htmlFor="brochure-phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
                 <input
                   type="tel"
-                  id="phone"
+                  id="brochure-phone"
                   name="phone"
                   value={brochureFormData.phone}
                   onChange={handleBrochureInputChange}
@@ -563,6 +517,15 @@ const BannerSection = () => {
                   required
                 />
                 {brochureFormErrors.phone && <p className="text-red-500 text-xs mt-1">{brochureFormErrors.phone}</p>}
+              </div>
+
+              <div className="mt-3 text-xs text-gray-500">
+                <label className="flex items-start">
+                  <input type="checkbox" className="mt-1 mr-2 flex-shrink-0" required />
+                  <span className="text-xs leading-tight">
+                    I authorize company representatives to Call, SMS, Email or WhatsApp me about its products and offers. This consent overrides any registration for DNC/NDNC.
+                  </span>
+                </label>
               </div>
 
               {submitMessage && (

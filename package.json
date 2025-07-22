@@ -2,6 +2,7 @@
   "name": "godrej1",
   "private": true,
   "version": "0.0.0",
+  "homepage": "/noida",
   "type": "module",
   "scripts": {
     "dev": "vite",

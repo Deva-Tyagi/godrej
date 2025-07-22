@@ -16,7 +16,7 @@ const Highlights = () => {
 
   // Initialize EmailJS
   useEffect(() => {
-    emailjs.init('FPyANi4X-1gUfsMCI'); // Replace with your EmailJS Public Key
+    emailjs.init('FPyANi4X-1gUfsMCI'); 
   }, []);
 
   const handleInputChange = (e) => {
@@ -59,12 +59,11 @@ const Highlights = () => {
       timeStyle: 'short'
     });
 
-    // Map formData to EmailJS template parameters
     const templateParams = {
       from_name: formData.name,
       from_email: formData.email,
       phone: formData.phone,
-      message: formData.message || 'No message provided',
+      message: 'Enquiry for download brochure for Godrej Majesty.',
       time: currentTime
     };
 
@@ -74,7 +73,6 @@ const Highlights = () => {
         'template_ncabbum', // Your EmailJS Template ID
         templateParams
       );
-      console.log('Email sent successfully:', templateParams);
       setSubmitMessage('Thank you! The brochure has been sent to your email.');
       setFormData({ name: '', email: '', phone: '', message: '' });
       setFormErrors({});
@@ -105,32 +103,32 @@ const Highlights = () => {
       <div className="w-full md:w-1/2 p-6 md:p-12">
         <h1 className="text-3xl md:text-4xl font-bold text-blue-600 mb-8">Highlights</h1>
 
-        <ul className="space-y-4 mb-8">
-          <li className="flex items-start">
-            <span className="text-green-600 mr-2">•</span>
-            <span className="text-gray-700 text-xl">Apartments : Coming Soon</span>
-          </li>
-          <li className="flex items-start">
-            <span className="text-green-600 mr-2">•</span>
-            <span className="text-gray-700 text-xl">High-End Specifications with Home Automation</span>
-          </li>
-          <li className="flex items-start">
-            <span className="text-green-600 mr-2">•</span>
-            <span className="text-gray-700 text-xl">Dedicated Recreational Zone for Every Tower</span>
-          </li>
-          <li className="flex items-start">
-            <span className="text-green-600 mr-2">•</span>
-            <span className="text-gray-700 text-xl">Double Height Entrance Reception Lobby Area</span>
-          </li>
-          <li className="flex items-start">
-            <span className="text-green-600 mr-2">•</span>
-            <span className="text-gray-700 text-xl">Tower : Coming Soon</span>
-          </li>
-          <li className="flex items-start">
-            <span className="text-green-600 mr-2">•</span>
-            <span className="text-gray-700 text-xl">Extra Amenities in Each tower at Ground Floor</span>
-          </li>
-        </ul>
+       <ul className="space-y-4 mb-8">
+  <li className="flex items-start">
+    <span className="text-green-600 mr-2">•</span>
+    <span className="text-gray-700 text-xl">Apartments: 3 & 4 BHK Luxury Residences (Launched)</span>
+  </li>
+  <li className="flex items-start">
+    <span className="text-green-600 mr-2">•</span>
+    <span className="text-gray-700 text-xl">High-End Specifications with Smart Home Automation</span>
+  </li>
+  <li className="flex items-start">
+    <span className="text-green-600 mr-2">•</span>
+    <span className="text-gray-700 text-xl">Dedicated Recreational Zone in Every Tower</span>
+  </li>
+  <li className="flex items-start">
+    <span className="text-green-600 mr-2">•</span>
+    <span className="text-gray-700 text-xl">Double Height Grand Entrance Lobby</span>
+  </li>
+  <li className="flex items-start">
+    <span className="text-green-600 mr-2">•</span>
+    <span className="text-gray-700 text-xl">Total Towers: 7 </span>
+  </li>
+  <li className="flex items-start">
+    <span className="text-green-600 mr-2">•</span>
+    <span className="text-gray-700 text-xl">Each Tower Equipped with Premium Ground Floor Amenities</span>
+  </li>
+</ul>
 
         <div className="border-t border-gray-300 pt-6">
           <button
@@ -207,7 +205,7 @@ const Highlights = () => {
                   {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
                 </div>
 
-                <div className="mb-6">
+                {/* <div className="mb-6">
                   <label htmlFor="message" className="block text-gray-700 mb-2">Message (Optional)</label>
                   <textarea
                     id="message"
@@ -217,12 +215,21 @@ const Highlights = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     placeholder="Any additional information..."
                   />
-                </div>
+                </div> */}
+
+                  <div className="mt-3 text-xs text-gray-500">
+              <label className="flex items-start">
+                <input type="checkbox" className="mt-1 mr-2 flex-shrink-0" required />
+                <span className="text-xs leading-tight">
+                  I authorize company representatives to Call, SMS, Email or WhatsApp me about its products and offers. This consent overrides any registration for DNC/NDNC.
+                </span>
+              </label>
+            </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 disabled:opacity-50"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold my-2 py-2 px-4 rounded-md transition duration-300 disabled:opacity-50"
                 >
                   {isSubmitting ? 'Sending...' : 'Submit'}
                 </button>

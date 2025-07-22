@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, Mail } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 import gallery1 from '../../assets/gallery_img1.png'
 import gallery2 from '../../assets/gallery_img2.png'
 import gallery3 from '../../assets/gallery_img3.png'
 import gallery4 from '../../assets/gallery_img4.png'
 import gallery5 from '../../assets/gallery_img5.png'
-
 
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -19,7 +19,12 @@ const Gallery = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
 
-  // Sample gallery images - replace with your actual images
+  // Initialize EmailJS
+  useEffect(() => {
+    emailjs.init('FPyANi4X-1gUfsMCI');
+  }, []);
+
+  // Your gallery images
   const galleryImages = [
     {
       id: 1,
@@ -50,12 +55,6 @@ const Gallery = () => {
       src: gallery5,
       alt: "Luxury Living Room",
       category: "Living Room"
-    },
-    {
-      id: 6,
-      src: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
-      alt: "Modern Bedroom",
-      category: "Bedroom"
     }
   ];
 
@@ -132,12 +131,9 @@ const Gallery = () => {
     setSubmitMessage('');
 
     try {
-      // EmailJS configuration - Replace with your actual credentials
-      const emailJSConfig = {
-        serviceID: 'your_service_id',
-        templateID: 'your_template_id',
-        userID: 'your_user_id'
-      };
+      // EmailJS configuration - Replace these with your actual credentials
+      const serviceID = 'service_91dd84g'; // Replace with your EmailJS service ID
+      const templateID = 'template_ncabbum'; // Replace with your EmailJS template ID
 
       // Template parameters for EmailJS
       const templateParams = {
@@ -145,23 +141,26 @@ const Gallery = () => {
         from_name: formData.name,
         from_email: formData.email,
         mobile: formData.mobile,
-        message: `Gallery inquiry from ${formData.name}. Contact details: Email - ${formData.email}, Mobile - ${formData.mobile}`,
+        message: `Gallery inquiry for Godrej Majesty from ${formData.name}. Contact details: Email - ${formData.email}, Mobile - ${formData.mobile}`,
         reply_to: formData.email
       };
 
-      // Simulate EmailJS send - Replace with actual EmailJS call
-      // await emailjs.send(emailJSConfig.serviceID, emailJSConfig.templateID, templateParams, emailJSConfig.userID);
+      // Send email using EmailJS
+      const response = await emailjs.send(serviceID, templateID, templateParams);
       
-      // For demo purposes, we'll simulate the email sending
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('EmailJS Response:', response);
       
-      setSubmitMessage('Thank you! Your request has been submitted successfully. We will contact you soon.');
-      setFormData({ name: '', email: '', mobile: '' });
-      
-      // Close modal after 3 seconds
-      setTimeout(() => {
-        closeFormModal();
-      }, 3000);
+      if (response.status === 200) {
+        setSubmitMessage('Thank you! Your request has been submitted successfully. We will contact you soon.');
+        setFormData({ name: '', email: '', mobile: '' });
+        
+        // Close modal after 3 seconds
+        setTimeout(() => {
+          closeFormModal();
+        }, 3000);
+      } else {
+        throw new Error('Email sending failed');
+      }
       
     } catch (error) {
       console.error('EmailJS Error:', error);
@@ -416,6 +415,15 @@ const Gallery = () => {
                     <p className="text-sm">{submitMessage}</p>
                   </div>
                 )}
+
+                <div className="mt-3 text-xs text-gray-500">
+                  <label className="flex items-start">
+                    <input type="checkbox" className="mt-1 mr-2 flex-shrink-0" required />
+                    <span className="text-xs leading-tight">
+                      I authorize company representatives to Call, SMS, Email or WhatsApp me about its products and offers. This consent overrides any registration for DNC/NDNC.
+                    </span>
+                  </label>
+                </div>
 
                 {/* Submit Button */}
                 <button

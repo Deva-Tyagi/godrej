@@ -8,7 +8,7 @@ function App() {
 
   return (
     <>
-    <Router>
+    <Router basename="/noida">
       <Routes>
         <Route path='/' element={<Navbar />} />
         <Route path='/privacy' element={<Privacy />} />

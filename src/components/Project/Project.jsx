@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { X, Phone } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 
 const Project = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
-    phone: '',
-    message: ''
+    phone: ''
   });
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [consentChecked, setConsentChecked] = useState(false);
 
   const apartments = [
     {
@@ -35,23 +35,26 @@ const Project = () => {
     }
   ];
 
+  // Initialize EmailJS with the public key
+  useEffect(() => {
+    emailjs.init('FPyANi4X-1gUfsMCI'); // Replace with your EmailJS public key
+  }, []);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value
     });
-    // Clear error for the field being edited
     setFormErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const validateForm = () => {
     const errors = {};
-    if (!formData.name) errors.name = 'Name is required';
-    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email))
-      errors.email = 'Valid email is required';
+    if (!formData.name.trim()) errors.name = 'Name is required';
     if (!formData.phone || !/^\d{10}$/.test(formData.phone))
       errors.phone = 'Valid 10-digit phone number is required';
+    if (!consentChecked) errors.consent = 'Please accept the terms';
     return errors;
   };
 
@@ -67,14 +70,45 @@ const Project = () => {
       return;
     }
 
-    // Simulate form submission (since EmailJS won't work in this environment)
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // EmailJS configuration
+      const emailJSConfig = {
+        serviceId: 'service_91dd84g', 
+        templateId: 'template_ncabbum',
+        publicKey: 'FPyANi4X-1gUfsMCI'
+      };
+
+      // Get current time in IST
+      const currentTime = new Date().toLocaleString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      });
+
+      // Prepare email data to match EmailJS template
+      const emailData = {
+        from_name: formData.name,
+        from_email: '',
+        phone: formData.phone,
+        message: 'Client request a call for Price List for Godrej Majesty',
+        time: currentTime
+      };
+
+      // Send email using EmailJS
+      await emailjs.send(
+        emailJSConfig.serviceId,
+        emailJSConfig.templateId,
+        emailData,
+        emailJSConfig.publicKey
+      );
+
       alert('Thank you! Your request has been submitted successfully. We will contact you soon.');
-      setFormData({ name: '', email: '', phone: '', message: '' });
+      setFormData({ name: '', phone: '' });
+      setConsentChecked(false);
       setFormErrors({});
       setShowPopup(false);
     } catch (error) {
+      console.error('EmailJS Error:', error);
       alert('Sorry, there was an error sending your request. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -87,6 +121,8 @@ const Project = () => {
 
   const closePopup = () => {
     setShowPopup(false);
+    setFormErrors({});
+    setConsentChecked(false);
   };
 
   return (
@@ -96,7 +132,7 @@ const Project = () => {
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-blue-600 mb-6 sm:mb-8 lg:mb-12">
           Price List
         </h1>
-        
+
         {/* Cards Grid - Fully Responsive */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {apartments.map((apartment, index) => (
@@ -108,7 +144,7 @@ const Project = () => {
                     {apartment.type}
                   </h3>
                 </div>
-                
+
                 {/* Card Details */}
                 <div className="space-y-4 sm:space-y-6 mb-4 sm:mb-6 lg:mb-8">
                   <div className="text-center">
@@ -121,7 +157,7 @@ const Project = () => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Card Footer - Button */}
               <div className="p-4 sm:p-6 lg:p-8 pt-0">
                 <button
@@ -151,9 +187,9 @@ const Project = () => {
                 <X size={24} />
               </button>
             </div>
-            
+
             {/* Form */}
-            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                   Full Name *
@@ -170,24 +206,7 @@ const Project = () => {
                 />
                 {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
               </div>
-              
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  className={`w-full px-3 py-2 sm:py-3 border ${formErrors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm sm:text-base`}
-                  placeholder="Enter your email address"
-                />
-                {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
-              </div>
-              
+
               <div>
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                   Phone Number *
@@ -200,26 +219,27 @@ const Project = () => {
                   onChange={handleInputChange}
                   required
                   className={`w-full px-3 py-2 sm:py-3 border ${formErrors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm sm:text-base`}
-                  placeholder="Enter your phone number"
+                  placeholder="Enter your 10-digit phone number"
                 />
                 {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
               </div>
-              
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                  Message (Optional)
+
+              <div className="mt-3 text-xs text-gray-500">
+                <label className="flex items-start">
+                  <input
+                    type="checkbox"
+                    className="mt-1 mr-2 flex-shrink-0"
+                    checked={consentChecked}
+                    onChange={(e) => setConsentChecked(e.target.checked)}
+                    required
+                  />
+                  <span className="text-xs leading-tight">
+                    I authorize company representatives to Call, SMS, Email or WhatsApp me about its products and offers. This consent overrides any registration for DNC/NDNC.
+                  </span>
                 </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  rows="4"
-                  className="w-full px-3 py-2 sm:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm sm:text-base resize-none"
-                  placeholder="Tell us about your requirements..."
-                />
+                {formErrors.consent && <p className="text-red-500 text-xs mt-1">{formErrors.consent}</p>}
               </div>
-              
+
               {/* Form Buttons */}
               <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-4">
                 <button
@@ -230,15 +250,14 @@ const Project = () => {
                   Cancel
                 </button>
                 <button
-                  type="button"
-                  onClick={handleSubmit}
+                  type="submit"
                   disabled={isSubmitting}
                   className="w-full sm:flex-1 px-4 py-2 sm:py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 >
                   {isSubmitting ? 'Submitting...' : 'Submit Request'}
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       )}

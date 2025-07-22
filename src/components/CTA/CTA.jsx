@@ -19,7 +19,7 @@ const CTA = () => {
   // EmailJS Configuration
   const EMAIL_SERVICE_ID = 'service_91dd84g';
   const EMAIL_TEMPLATE_ID = 'template_ncabbum';
-  const EMAIL_PUBLIC_KEY = 'FPyANi4X-1gUfsMCI'; // Replace with your EmailJS Public Key
+  const EMAIL_PUBLIC_KEY = 'FPyANi4X-1gUfsMCI'; 
 
   // Initialize EmailJS
   useEffect(() => {
@@ -79,7 +79,7 @@ const CTA = () => {
       from_email: formData.email,
       phone: formData.mobile,
       message: formData.message || `User requested to ${
-        formType === 'brochure' ? 'download the investment brochure' : 'schedule a meeting for investment consultation'
+        formType === 'brochure' ? 'download the investment brochure for Godrej Majesty' : 'schedule a meeting for investment consultation for Godrej Majesty'
       }.`,
       time: currentTime,
       request_type: formType === 'brochure' ? 'Brochure Download' : 'Schedule Meeting',
@@ -243,7 +243,7 @@ const CTA = () => {
                 )}
               </div>
 
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Message (Optional)
                 </label>
@@ -254,7 +254,16 @@ const CTA = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   placeholder="Any additional information..."
                 />
-              </div>
+              </div> */}
+
+                <div className="mt-3 text-xs text-gray-500">
+              <label className="flex items-start">
+                <input type="checkbox" className="mt-1 mr-2 flex-shrink-0" required />
+                <span className="text-xs leading-tight">
+                  I authorize company representatives to Call, SMS, Email or WhatsApp me about its products and offers. This consent overrides any registration for DNC/NDNC.
+                </span>
+              </label>
+            </div>
 
               {submitMessage && (
                 <div

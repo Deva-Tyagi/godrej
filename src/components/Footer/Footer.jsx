@@ -67,7 +67,7 @@ const Footer = () => {
       from_name: formData.fullName,
       from_email: formData.email,
       phone: formData.phone,
-      message: `Site visit request from ${formData.fullName}. Contact: ${formData.email}, Phone: ${formData.phone}`,
+      message: `Site visit request from ${formData.fullName}. Contact: ${formData.email}, Phone: ${formData.phone} (Godrej Majesty)`,
       time: currentTime
     };
 
@@ -235,6 +235,15 @@ const Footer = () => {
                   <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>
                 )}
               </div>
+
+                <div className="mt-3 text-xs text-gray-500">
+              <label className="flex items-start">
+                <input type="checkbox" className="mt-1 mr-2 flex-shrink-0" required />
+                <span className="text-xs leading-tight">
+                  I authorize company representatives to Call, SMS, Email or WhatsApp me about its products and offers. This consent overrides any registration for DNC/NDNC.
+                </span>
+              </label>
+            </div>
 
               <button
                 type="submit"

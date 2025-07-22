@@ -16,7 +16,7 @@ import Footer from "../Footer/Footer";
 const Navbar = () => {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Added mobile menu state
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); 
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -97,7 +97,7 @@ const Navbar = () => {
       from_name: formData.name,
       from_email: formData.email,
       phone: formData.phone,
-      message: formData.message || "User submitted contact form from Navbar.",
+      message: "User submitted contact form from Navbar for Godrej Majesty.",
       time: currentTime
     };
 

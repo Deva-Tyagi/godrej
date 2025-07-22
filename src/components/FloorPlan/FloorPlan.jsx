@@ -36,7 +36,7 @@ const FloorPlan = () => {
 
   // Initialize EmailJS
   useEffect(() => {
-    emailjs.init('FPyANi4X-1gUfsMCI'); // Replace with your EmailJS Public Key
+    emailjs.init('FPyANi4X-1gUfsMCI');
   }, []);
 
   const handleInputChange = (e) => {
@@ -45,7 +45,6 @@ const FloorPlan = () => {
       ...prev,
       [name]: value
     }));
-    // Clear error for the field being edited
     setFormErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
@@ -84,7 +83,7 @@ const FloorPlan = () => {
       from_name: formData.name,
       from_email: formData.email,
       phone: formData.mobile,
-      message: formData.message || 'No message provided',
+      message: `Floor plan request for Godrej Majesty.`,
       time: currentTime
     };
 
@@ -249,7 +248,7 @@ const FloorPlan = () => {
                   )}
                 </div>
 
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Message (Optional)
                   </label>
@@ -260,7 +259,16 @@ const FloorPlan = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Any additional information..."
                   />
-                </div>
+                </div> */}
+
+                  <div className="mt-3 text-xs text-gray-500">
+              <label className="flex items-start">
+                <input type="checkbox" className="mt-1 mr-2 flex-shrink-0" required />
+                <span className="text-xs leading-tight">
+                  I authorize company representatives to Call, SMS, Email or WhatsApp me about its products and offers. This consent overrides any registration for DNC/NDNC.
+                </span>
+              </label>
+            </div>
 
                 {/* Submit Message */}
                 {submitMessage && (
